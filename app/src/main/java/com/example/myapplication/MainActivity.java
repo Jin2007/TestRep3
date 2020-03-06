@@ -1,36 +1,44 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    List<Human> people = new ArrayList<>();
+    TabLayout tabLayout;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setInitialData();
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
 
-        RecyclerView recyclerView = findViewById(R.id.list);
+        tabLayout.addTab(tabLayout.newTab().setText("All"));
+        tabLayout.addTab(tabLayout.newTab().setText("Male"));
+        tabLayout.addTab(tabLayout.newTab().setText("Female"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        MyAdapter adapter = new MyAdapter(this, people);
-
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void setInitialData() {
-
-        people.add(new Human("Vasiliy", "Pupkin"));
-        people.add(new Human("Roman", "Starshiy"));
-        people.add(new Human ("Roman", "Mladshiy"));
-        people.add(new Human ("Vitalka", "Boxer"));
+        final AdapterFragment adapterFragment = new AdapterFragment(this,getSupportFragmentManager(),
+                tabLayout.getTabCount());
+        viewPager.setAdapter(adapterFragment);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
     }
 }

@@ -1,14 +1,17 @@
 package com.example.myapplication;
 
-class Human {
+public class Human {
 
     private String name;
     private String secondName;
+    private String sex;
 
-    public Human(String name, String company){
+    public Human(String name, String secondName, String sex){
 
         this.name=name;
-        this.secondName = company;
+        this.secondName = secondName;
+        this.sex = sex;
+
     }
 
     public String getName() {
@@ -17,5 +20,9 @@ class Human {
 
     public String getSecondName() {
         return this.secondName;
+    }
+
+    public String getSex(){
+        return this.sex;
     }
 }
