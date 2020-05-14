@@ -25,4 +25,16 @@ public class Human {
     public String getSex(){
         return this.sex;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 }

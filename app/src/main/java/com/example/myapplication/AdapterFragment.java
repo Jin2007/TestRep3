@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 public class AdapterFragment extends FragmentStatePagerAdapter {
     Context context;
     int totalTabs;
+
     public AdapterFragment(Context c, FragmentManager fm, int totalTabs) {
         super(fm);
         context = c;
