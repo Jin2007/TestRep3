@@ -78,6 +78,14 @@
         android:text="NEW PHOTO">
     </Button>
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/newImage"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center">
+    </ImageView>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

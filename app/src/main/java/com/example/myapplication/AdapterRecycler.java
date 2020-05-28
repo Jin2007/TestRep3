@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
         holder.nameView.setText(human.getName());
         holder.secondNameView.setText(human.getSecondName());
         holder.sexView.setText(human.getSex());
+        holder.imageView.setImageURI(Uri.parse(human.getPhoto()));
 
     }
 
@@ -55,7 +57,7 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
             nameView = v.findViewById(R.id.name);
             secondNameView = v.findViewById(R.id.secondName);
             sexView = v.findViewById(R.id.sex);
-            Picasso.get().load("https://icdn.lenta.ru/images/2018/05/30/22/20180530221332205/detail_fb46603ad5bb18f91ecab39bc1a6c5b4.jpg").into(imageView);
+            //Picasso.get().load("https://icdn.lenta.ru/images/2018/05/30/22/20180530221332205/detail_fb46603ad5bb18f91ecab39bc1a6c5b4.jpg").into(imageView);
         }
     }
 }

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,9 @@ public class Male extends Fragment {
 
     List<Human> people = new ArrayList<>();
     DBHelper dbHelper;
+    final String TAG = "States";
+    AdapterRecycler adapterRecycler;
+    Handler handler;
 
     public Male() {
         // Required empty public constructor
@@ -26,10 +31,11 @@ public class Male extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "Male Tab: onCreate()");
         View view = inflater.inflate(R.layout.fragment_male, container, false);
         dbHelper = new DBHelper(getContext());
         RecyclerView recyclerView = view.findViewById(R.id.list);
-        AdapterRecycler adapterRecycler = new AdapterRecycler(view.getContext(), people);
+        adapterRecycler = new AdapterRecycler(view.getContext(), people);
         recyclerView.setAdapter(adapterRecycler);
         return view;
     }
@@ -37,25 +43,67 @@ public class Male extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        handler = new Handler();
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor c = db.query("mytable", null, null, null, null, null, null);
-        people.clear();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Male Tab: onResume()");
 
-        if (c.moveToFirst()) {
-            int nameColIndex = c.getColumnIndex("name");
-            int surnameColIndex = c.getColumnIndex("surname");
-            int sexColIndex = c.getColumnIndex("sex");
-            do {
-                if (c.getString(sexColIndex) == null) {
-                    return;
-                } else if (c.getString(sexColIndex).equals("Male")) {
-                    Human human = new Human(c.getString(nameColIndex), c.getString(surnameColIndex), c.getString(sexColIndex));
-                    people.add(human);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                Cursor c = db.query("mytable", null, null, null, null, null, null);
+                people.clear();
+
+                if (c.moveToFirst()) {
+                    int nameColIndex = c.getColumnIndex("name");
+                    int surnameColIndex = c.getColumnIndex("surname");
+                    int sexColIndex = c.getColumnIndex("sex");
+                    int photoColIndex = c.getColumnIndex("uri");
+                    do {
+                        if (c.getString(sexColIndex) == null) {
+                            return;
+                        } else if (c.getString(sexColIndex).equals("Male")) {
+                            Human human = new Human(c.getString(nameColIndex), c.getString(surnameColIndex),
+                                    c.getString(sexColIndex), c.getString(photoColIndex));
+                            people.add(human);
+                        }
+                    } while (c.moveToNext());
                 }
-            } while (c.moveToNext());
+                handler.post(updateProgress);
+                c.close();
+                dbHelper.close();
+            }
+        });
+        thread.start();
+    }
+
+    Runnable updateProgress = new Runnable() {
+        public void run() {
+            adapterRecycler.notifyDataSetChanged();
         }
-        c.close();
-        dbHelper.close();
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "Male Tab: onStart()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "Male Tab: onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "Male Tab: onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Male Tab: onDestroy()");
     }
 }

@@ -1,16 +1,20 @@
 package com.example.myapplication;
 
+import android.net.Uri;
+
 public class Human {
 
     private String name;
     private String secondName;
     private String sex;
+    private String photo;
 
-    public Human(String name, String secondName, String sex){
+    public Human(String name, String secondName, String sex, String photoPath){
 
         this.name=name;
         this.secondName = secondName;
         this.sex = sex;
+        this.photo = photoPath;
 
     }
 
@@ -26,15 +30,11 @@ public class Human {
         return this.sex;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+    //    public void setName(String name) {
+//        this.name = name;
+//    }
 }
