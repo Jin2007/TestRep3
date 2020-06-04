@@ -40,11 +40,14 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
     RadioButton checkFemale;
     Button newPhoto;
     Button save;
-    DBHelper dbHelper;
+    //DBHelper dbHelper;
+    AppDatabase db;
+    HumanDao humanDao;
     private final int Pick_image = 1;
     ImageView imageView;
     Uri fileUri;
     Bitmap bitmap;
+    long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,31 +66,61 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
         save = findViewById(R.id.save);
         save.setOnClickListener(this);
 
-        dbHelper = new DBHelper(this);
+        //dbHelper = new DBHelper(this);
         Log.d(TAG, "SecondActivity: onCreate()");
     }
 
     @Override
     public void onClick(View view) {
-        ContentValues cv = new ContentValues();
+        //ContentValues cv = new ContentValues();
 
-        String edtName = editName.getText().toString();
-        String edtSurname = editSurname.getText().toString();
-        String edtSex = "who?";
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        String edtName = editName.getText().toString();
+//        String edtSurname = editSurname.getText().toString();
+//        String edtSex = "who?";
+        //SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Log.d(TAG, "onClick");
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.save:
-                cv.put("name", edtName);
-                cv.put("surname", edtSurname);
-                if (checkMale.isChecked() == true){
-                    edtSex = "Male";
-                } else if(checkFemale.isChecked()==true){
-                    edtSex = "Female";
-                }
-                cv.put("sex", edtSex);
-                cv.put("uri", String.valueOf(fileUri));
-                db.insert("mytable", null, cv);
+                Log.d(TAG, "Button: save");
+                //cv.put("name", edtName);
+                //cv.put("surname", edtSurname);
+//                if (checkMale.isChecked() == true){
+//                    edtSex = "Male";
+//                } else if(checkFemale.isChecked()==true){
+//                    edtSex = "Female";
+//                }
+                //cv.put("sex", edtSex);
+                //cv.put("uri", String.valueOf(fileUri));
+                //db.insert("mytable", null, cv);
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        db = App.getInstance().getDatabase();
+                        humanDao = db.humanDao();
+                        id = humanDao.getAll().size();
+                        Human human = new Human();
+                        human.id = ++id;
+                        Log.d(TAG, "profile id " + human.id);
+                        human.name = editName.getText().toString();
+                        human.secondName = editSurname.getText().toString();
+                        if (checkMale.isChecked() == true) {
+                            human.sex = "Male";
+                        } else if (checkFemale.isChecked() == true) {
+                            human.sex = "Female";
+                        }
+                        Log.d(TAG, "sex is "+human.sex);
+                        human.photo = String.valueOf(fileUri);
+
+                        humanDao.insert(human);
+                        if (humanDao.getById(human.id).getId() == -1) {
+                            Log.d(TAG, "profile has not been added");
+                        } else {
+                            Log.d(TAG, "profile " + human.getName() + " has been added");
+                        }
+                    }
+                });
+                thread.start();
                 finish();
                 break;
             case R.id.newPhoto:
@@ -99,12 +132,12 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
                 if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
                     startActivityForResult(photoPickerIntent, Pick_image);
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             REQUEST_CODE_PERMISSION_READEXTERNAL_STORAGE);
                 }
                 break;
         }
-        db.close();
+        //db.close();
     }
 
     @Override
@@ -139,35 +172,5 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
                     imageView.setImageBitmap(bitmap);
                 }
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "SecondActivity: onStart()");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "SecondActivity: onResume()");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "SecondActivity: onPause()");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "SecondActivity: onStop()");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "SecondActivity: onDestroy()");
     }
 }

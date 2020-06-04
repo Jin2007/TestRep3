@@ -1,21 +1,30 @@
 package com.example.myapplication;
 
-import android.net.Uri;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class Human {
 
-    private String name;
-    private String secondName;
-    private String sex;
-    private String photo;
+    @PrimaryKey
+    public long id;
+    public String name;
+    public String secondName;
+    public String sex;
+    public String photo;
 
-    public Human(String name, String secondName, String sex, String photoPath){
+//    public Human(long id, String name, String secondName, String sex, String photoPath){
+//
+//        this.name=name;
+//        this.secondName = secondName;
+//        this.sex = sex;
+//        this.photo = photoPath;
+//
+//    }
 
-        this.name=name;
-        this.secondName = secondName;
-        this.sex = sex;
-        this.photo = photoPath;
 
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -33,8 +42,4 @@ public class Human {
     public String getPhoto() {
         return photo;
     }
-
-    //    public void setName(String name) {
-//        this.name = name;
-//    }
 }

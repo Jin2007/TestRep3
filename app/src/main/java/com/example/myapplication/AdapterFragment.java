@@ -4,9 +4,9 @@ import android.content.Context;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-public class AdapterFragment extends FragmentStatePagerAdapter {
+public class AdapterFragment extends FragmentPagerAdapter {
     Context context;
     int totalTabs;
 
