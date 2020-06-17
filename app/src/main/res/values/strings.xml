@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="newAct">NEW</string>
+    <string name="fire">Yes</string>
+    <string name="cancel">No</string>
+
 </resources>

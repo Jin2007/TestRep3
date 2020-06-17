@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,12 +17,16 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyViewHolder> {
-     LayoutInflater inflater;
+    private static final String TAG = "States";
+    LayoutInflater inflater;
      List<Human> people;
+//     private OnProfilePositionListener onProfilePositionListener;
 
-    public AdapterRecycler(Context context, List<Human> people){
+    public AdapterRecycler(Context context, final List<Human> people){
         this.inflater = LayoutInflater.from(context);
         this.people = people;
+//        this.onProfilePositionListener = onProfilePositionListener;
+
     }
 
     @NonNull
@@ -34,12 +39,19 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         Human human = people.get(position);
         holder.nameView.setText(human.getName());
         holder.secondNameView.setText(human.getSecondName());
         holder.sexView.setText(human.getSex());
-        holder.imageView.setImageURI(Uri.parse(human.getPhoto()));
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               MainActivity mA1 = new MainActivity();
+               mA1.showDialogMethod(position);
+            }
+        });
+        Picasso.get().load(Uri.parse(human.getPhoto())).resize(150,150).into(holder.imageView);
 
     }
 
@@ -48,16 +60,30 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
         return people.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView nameView, secondNameView, sexView;
+        Button deleteButton;
+//        OnProfilePositionListener onProfilePositionListener;
+
         public MyViewHolder(@NonNull View v) {
             super(v);
+            deleteButton = v.findViewById(R.id.deleteButton);
             imageView = v.findViewById(R.id.image);
             nameView = v.findViewById(R.id.name);
             secondNameView = v.findViewById(R.id.secondName);
             sexView = v.findViewById(R.id.sex);
-            //Picasso.get().load("https://icdn.lenta.ru/images/2018/05/30/22/20180530221332205/detail_fb46603ad5bb18f91ecab39bc1a6c5b4.jpg").into(imageView);
+//            this.onProfilePositionListener = onProfilePositionListener;
+//            v.setOnClickListener(this);
         }
+
+//        @Override
+//        public void onClick(View v) {
+//            this.onProfilePositionListener.onProfileClick(getAdapterPosition());
+//        }
     }
+
+//    public interface OnProfilePositionListener{
+//        void onProfileClick(int position);
+//    }
 }
