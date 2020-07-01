@@ -47,13 +47,11 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
     private final int Pick_image = 1;
     ImageView imageView;
     Uri fileUri;
-    //long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_two);
-
 
         editName = findViewById(R.id.editName);
         editSurname = findViewById(R.id.editSurname);
@@ -66,7 +64,6 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
         save = findViewById(R.id.save);
         save.setOnClickListener(this);
 
-        //dbHelper = new DBHelper(this);
         Log.d(TAG, "SecondActivity: onCreate()");
     }
 
@@ -83,9 +80,7 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
                     public void run() {
                         db = App.getInstance().getDatabase();
                         humanDao = db.humanDao();
-                        //id = humanDao.getAll().size();
                         Human human = new Human();
-//                        human.id = ++id;
                         Log.d(TAG, "profile id " + human.id);
                         human.name = editName.getText().toString();
                         human.secondName = editSurname.getText().toString();
@@ -97,11 +92,7 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
                         Log.d(TAG, "sex is "+human.sex);
                         human.photo = String.valueOf(fileUri);
                         humanDao.insert(human);
-//                        if (humanDao.getById(human.id).getId() == -1) {
-//                            Log.d(TAG, "profile has not been added");
-//                        } else {
-//                            Log.d(TAG, "profile " + human.getName() + " has been added");
-//                        }
+
                     }
                 });
                 thread.start();
@@ -110,9 +101,7 @@ public class ActivityTwo extends AppCompatActivity implements View.OnClickListen
             case R.id.newPhoto:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
-
                 int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
                 if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
                     startActivityForResult(photoPickerIntent, Pick_image);
                 } else {

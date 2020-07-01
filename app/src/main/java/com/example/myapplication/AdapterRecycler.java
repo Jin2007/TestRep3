@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,25 +10,58 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyViewHolder> {
     private static final String TAG = "States";
     LayoutInflater inflater;
-     List<Human> people;
-//     private OnProfilePositionListener onProfilePositionListener;
+    List<Human> people;
+
+    int rowPosition;
+    AlertDialog alertDialog;
 
     public AdapterRecycler(Context context, final List<Human> people){
         this.inflater = LayoutInflater.from(context);
         this.people = people;
-//        this.onProfilePositionListener = onProfilePositionListener;
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Ты че, дурак?!")
+                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, final int id) {
+                        // Use mListRowPosition for clicked list row...
+
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AppDatabase db = App.getInstance().getDatabase();
+                                HumanDao humanDao = db.humanDao();
+                                humanDao.delete(people.get(rowPosition));
+                                people.remove(rowPosition);
+                            }
+                        });
+                        thread.start();
+                        notifyItemRemoved(rowPosition);
+                        notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+    }
+
+    void showDialog(int position){
+        rowPosition = position;
+        if (alertDialog != null){
+            alertDialog.show();
+        }
     }
 
     @NonNull
@@ -47,8 +82,7 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               MainActivity mA1 = new MainActivity();
-               mA1.showDialogMethod(position);
+               showDialog(position);
             }
         });
         Picasso.get().load(Uri.parse(human.getPhoto())).resize(150,150).into(holder.imageView);
@@ -64,7 +98,6 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
         ImageView imageView;
         TextView nameView, secondNameView, sexView;
         Button deleteButton;
-//        OnProfilePositionListener onProfilePositionListener;
 
         public MyViewHolder(@NonNull View v) {
             super(v);
@@ -73,17 +106,6 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
             nameView = v.findViewById(R.id.name);
             secondNameView = v.findViewById(R.id.secondName);
             sexView = v.findViewById(R.id.sex);
-//            this.onProfilePositionListener = onProfilePositionListener;
-//            v.setOnClickListener(this);
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            this.onProfilePositionListener.onProfileClick(getAdapterPosition());
-//        }
     }
-
-//    public interface OnProfilePositionListener{
-//        void onProfileClick(int position);
-//    }
 }

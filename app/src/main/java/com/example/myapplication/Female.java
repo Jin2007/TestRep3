@@ -1,15 +1,14 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class Female extends Fragment {
     List<Human> people = new ArrayList<>();
     final String TAG = "States";
     AdapterRecycler adapterRecycler;
-    Handler handler;
+    AppDatabase db;
 
     public Female() {
         // Required empty public constructor
@@ -38,31 +37,25 @@ public class Female extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "Female is resumed");
-        handler = new Handler();
 
-        Thread thread = new Thread(new Runnable() {
+        db = App.getInstance().getDatabase();
+        LiveData<List<Human>> modelLiveData = db.humanDao().getAll();
+        modelLiveData.observe(this, new Observer<List<Human>>() {
             @Override
-            public void run() {
-                AppDatabase db = App.getInstance().getDatabase();
-                HumanDao humanDao = db.humanDao();
+            public void onChanged(List<Human> humans) {
                 people.clear();
-                List<Human> humanFemale = humanDao.getAll();
-                for (Human human: humanFemale){
-                    if (human.getSex().equals("Female")){
-                        people.add(human);
+                List<Human> femaleList = new ArrayList<>();
+                femaleList.addAll(humans);
+                for (Human h: femaleList){
+                    if (h.sex.equals("Female")){
+                        people.add(h);
                     }
                 }
-                handler.post(updateProgress);
+                adapterRecycler.notifyDataSetChanged();
+                Log.d(TAG, "Female OnChanged");
             }
         });
-        thread.start();
     }
-
-    Runnable updateProgress = new Runnable() {
-        public void run() {
-            adapterRecycler.notifyDataSetChanged();
-        }
-    };
 
     @Override
     public void onStop() {
@@ -75,9 +68,4 @@ public class Female extends Fragment {
         super.onPause();
         Log.d(TAG, "Female is paused");
     }
-
-//    @Override
-//    public void onProfileClick(int position) {
-//        people.get(position);
-//    }
 }

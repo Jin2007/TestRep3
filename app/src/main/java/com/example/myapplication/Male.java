@@ -1,16 +1,14 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +17,7 @@ public class Male extends Fragment {
     List<Human> people = new ArrayList<>();
     final String TAG = "States";
     AdapterRecycler adapterRecycler;
-    Handler handler;
-
+    AppDatabase db;
 
     public Male() {
         // Required empty public constructor
@@ -40,31 +37,25 @@ public class Male extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "Male is resumed");
-        handler = new Handler();
 
-        Thread thread = new Thread(new Runnable() {
+        db = App.getInstance().getDatabase();
+        LiveData<List<Human>> modelLiveData = db.humanDao().getAll();
+        modelLiveData.observe(this, new Observer<List<Human>>() {
             @Override
-            public void run() {
-                AppDatabase db = App.getInstance().getDatabase();
-                HumanDao humanDao = db.humanDao();
+            public void onChanged(List<Human> humans) {
                 people.clear();
-                List<Human> humanMale = humanDao.getAll();
-                for (Human human: humanMale){
-                    if (human.getSex().equals("Male")){
-                        people.add(human);
+                List<Human> maleList = new ArrayList<>();
+                maleList.addAll(humans);
+                for (Human h: maleList){
+                    if (h.sex.equals("Male")){
+                        people.add(h);
                     }
                 }
-                handler.post(updateProgress);
+                adapterRecycler.notifyDataSetChanged();
+                Log.d(TAG, "Male OnChanged");
             }
         });
-        thread.start();
     }
-
-    Runnable updateProgress = new Runnable() {
-        public void run() {
-            adapterRecycler.notifyDataSetChanged();
-        }
-    };
 
     @Override
     public void onStop() {

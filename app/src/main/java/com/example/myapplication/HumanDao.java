@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface HumanDao {
 
         @Query("SELECT * FROM human")
-        List<Human> getAll();
+        LiveData<List<Human>> getAll();
 
         @Query("SELECT * FROM human WHERE id = :id")
         Human getById(long id);
