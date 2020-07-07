@@ -29,6 +29,8 @@ public class Female extends Fragment {
         View view = inflater.inflate(R.layout.fragment_female, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.list);
         adapterRecycler = new AdapterRecycler(view.getContext(), people);
+//        adapterRecycler.getItemViewType(2);
+//        Log.d(TAG, "Female item type is: "+ adapterRecycler.getItemViewType(2));
         recyclerView.setAdapter(adapterRecycler);
         return view;
     }

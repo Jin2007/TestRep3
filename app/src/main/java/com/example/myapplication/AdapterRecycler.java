@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
     List<Human> people;
 
     int rowPosition;
+    int itemViewType;
     AlertDialog alertDialog;
 
     public AdapterRecycler(Context context, final List<Human> people){
@@ -64,11 +66,21 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if(people.get(position).sex.equals("Male")) {
+            itemViewType = R.layout.list_item;
+        } else if (people.get(position).sex.equals("Female")){
+            itemViewType = R.layout.list_female_item;
+        }
+        return itemViewType;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-
+        Log.d(TAG, "View type is " + viewType);
+        View view = LayoutInflater.from(parent.getContext()).inflate(itemViewType, parent, false);
         MyViewHolder vh = new MyViewHolder(view);
         return vh;
     }
@@ -86,7 +98,6 @@ public class AdapterRecycler extends RecyclerView.Adapter<AdapterRecycler.MyView
             }
         });
         Picasso.get().load(Uri.parse(human.getPhoto())).resize(150,150).into(holder.imageView);
-
     }
 
     @Override

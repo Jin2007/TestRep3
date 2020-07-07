@@ -28,6 +28,8 @@ public class All extends Fragment {
             View view = inflater.inflate(R.layout.fragment_all, container, false);
             RecyclerView recyclerView = view.findViewById(R.id.list);
             adapterRecycler = new AdapterRecycler(view.getContext(), people);
+//            adapterRecycler.getItemViewType(1);
+//            Log.d(TAG, "All item type is: "+ adapterRecycler.getItemViewType(1));
             recyclerView.setAdapter(adapterRecycler);
             return view;
         }
